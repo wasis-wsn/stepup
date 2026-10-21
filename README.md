@@ -497,8 +497,10 @@ The frontend is built as a contemporary fashion editorial and sneaker catalog SP
 
 ---
 
-## 👥 Reviewer & Submission Note
+## 🙏 Thank You
 
-- As specified in the coding test guidelines, for private repositories please add the reviewer collaborators: **`@harrymahardhika`** and **`@zenner88`**.
-- All code adheres to PSR-12 and standard Laravel conventions.
-- Sensitive credentials and active `.env` files are excluded via `.gitignore`.
+Terima kasih atas kesempatan dan tantangan yang telah diberikan untuk mengerjakan proyek coding test ini. **STEPUP** dibangun dengan dedikasi penuh mengedepankan *clean architecture*, keamanan API, performa tinggi, *automated testing* menyeluruh, serta pengalaman pengguna yang elegan dan responsif.
+
+Semoga proyek ini dapat memberikan gambaran komprehensif mengenai standar kerja dan kemampuan teknis saya dalam pengembangan aplikasi Full-Stack modern.
+
+*Built with passion, precision, and purpose by **Wasis Wicaksono**.*
