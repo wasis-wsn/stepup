@@ -1,0 +1,70 @@
+import type { Product, Category } from '@/types';
+
+export const mockCategories: Category[] = [
+  { id: 1, name: 'Running Shoes', slug: 'running-shoes' },
+  { id: 2, name: 'Casual Sneakers', slug: 'casual-sneakers' },
+  { id: 3, name: 'Formal Shoes', slug: 'formal-shoes' },
+];
+
+export const mockProducts: Product[] = [
+  {
+    id: 1,
+    name: 'STEPUP AeroRun Pro',
+    slug: 'stepup-aerorun-pro',
+    description: 'Lightweight running shoes for daily training with responsive cushion technology.',
+    price: '450000.00',
+    image: '/storage/products/aerorun-pro.png',
+    category: mockCategories[0],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 2,
+    name: 'STEPUP Urban Classic',
+    slug: 'stepup-urban-classic',
+    description: 'Timeless minimalist low-top sneaker made for versatile everyday street wear.',
+    price: '350000.00',
+    image: '/storage/products/urban-classic.png',
+    category: mockCategories[1],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 3,
+    name: 'STEPUP Velocity Blast',
+    slug: 'stepup-velocity-blast',
+    description: 'Engineered mesh upper with carbon-infused speed plate for marathon tempo runs.',
+    price: '699000.00',
+    image: '/storage/products/aerorun-pro.png',
+    category: mockCategories[0],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 4,
+    name: 'STEPUP Oxford Monarch',
+    slug: 'stepup-oxford-monarch',
+    description: 'Genuine full-grain leather oxford with handcrafted welt and elegant finish.',
+    price: '850000.00',
+    image: '/storage/products/urban-classic.png',
+    category: mockCategories[2],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 5,
+    name: 'STEPUP Street Glide',
+    slug: 'stepup-street-glide',
+    description: 'Ultra-flexible sole and breathable knit material for maximum all-day comfort.',
+    price: '389000.00',
+    image: '/storage/products/urban-classic.png',
+    category: mockCategories[1],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 6,
+    name: 'STEPUP Derby Executive',
+    slug: 'stepup-derby-executive',
+    description: 'Premium sleek dress shoe with cushioned insole for formal business meetings.',
+    price: '920000.00',
+    image: '/storage/products/urban-classic.png',
+    category: mockCategories[2],
+    created_at: new Date().toISOString(),
+  },
+];

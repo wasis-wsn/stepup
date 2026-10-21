@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="stepupGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18181b"/>
+      <stop offset="100%" stop-color="#09090b"/>
+    </linearGradient>
+    <linearGradient id="soleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e4e4e7"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#a1a1aa"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Squircle -->
+  <rect width="64" height="64" rx="14" fill="url(#stepupGrad)"/>
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="13.25" fill="none" stroke="#27272a" stroke-width="1.5"/>
+
+  <!-- Sneaker Silhouette Group -->
+  <g transform="translate(1, 0)">
+    <!-- Sneaker Midsole / Outsole -->
+    <path d="M 12 43 C 12 40 15 39 18 39 L 44 39 C 48 39 52 40.5 54 42 C 54.5 42.4 54.2 43.5 53.5 43.8 C 50 45.2 44 46 32 46 C 18 46 12 45 12 43 Z" fill="url(#soleGrad)"/>
+    
+    <!-- Sole tread detail / accent line -->
+    <path d="M 16 44.5 L 24 44.5 M 28 44.5 L 36 44.5 M 40 44.5 L 48 44" stroke="#71717a" stroke-width="1" stroke-linecap="round"/>
+
+    <!-- Sneaker Upper Body -->
+    <path d="M 14 38.5 
+             C 13 32 15 25 21 23 
+             C 24 22 26 25 28 26.5 
+             L 34 29 
+             L 45 32 
+             C 50 33.5 53 36 53.5 38.5 
+             Z" 
+          fill="#fafafa"/>
+
+    <!-- Ankle Collar / Heel Notch -->
+    <path d="M 20 23.5 C 22.5 25.5 25.5 26.5 28 26.5" stroke="#18181b" stroke-width="1.8" stroke-linecap="round"/>
+
+    <!-- Dynamic "STEP UP" Athletic Slashes / Overlay -->
+    <path d="M 23 37.5 L 29 30" stroke="#09090b" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 28 37.5 L 34 30.5" stroke="#09090b" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 33 37.5 L 39 31.5" stroke="#09090b" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- Speed arrow / Step up subtle chevron at top-right -->
+    <path d="M 44 18 L 49 18 L 49 23" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 41 26 L 48.5 18.5" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  </g>
+</svg>

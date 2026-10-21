@@ -1,0 +1,175 @@
+# ==============================================================================
+# STEPUP - Production Docker Compose Configuration
+# Designed for Ubuntu Server, Dokploy, Traefik, & Cloudflare Tunnel
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. PHP-FPM 8.3 Application Core
+  # ----------------------------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    container_name: stepup-prod-app
+    restart: always
+    environment:
+      APP_NAME: "${APP_NAME:-STEPUP}"
+      APP_ENV: production
+      APP_KEY: ${APP_KEY}
+      APP_DEBUG: ${APP_DEBUG:-false}
+      APP_URL: ${APP_URL:-https://stepup.sorantara.id}
+      LOG_CHANNEL: ${LOG_CHANNEL:-daily}
+      LOG_LEVEL: ${LOG_LEVEL:-error}
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-stepup_db}
+      DB_USERNAME: ${DB_USERNAME:-stepup_user}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SESSION_DRIVER: database
+      CACHE_STORE: database
+      QUEUE_CONNECTION: database
+      MAIL_MAILER: ${MAIL_MAILER:-smtp}
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_ENCRYPTION: ${MAIL_ENCRYPTION:-tls}
+      MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-no-reply@stepup.id}
+      MAIL_FROM_NAME: "${APP_NAME:-STEPUP}"
+    volumes:
+      - stepup_storage_data:/var/www/html/storage/app
+    networks:
+      - stepup-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # ----------------------------------------------------------------------------
+  # 2. Production Nginx Reverse Proxy & Static Asset Server
+  # ----------------------------------------------------------------------------
+  web:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile.production
+    container_name: stepup-prod-web
+    restart: always
+    ports:
+      # Port 8086 untuk direct local/LAN access (menghindari konflik dengan 8085)
+      - "${STEPUP_WEB_PORT:-8086}:80"
+    volumes:
+      - stepup_storage_data:/var/www/html/storage/app:ro
+    networks:
+      - stepup-network
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stepup.rule=Host(`${APP_DOMAIN:-stepup.sorantara.id}`)"
+      - "traefik.http.routers.stepup.entrypoints=websecure"
+      - "traefik.http.routers.stepup.tls=true"
+      - "traefik.http.routers.stepup.tls.certresolver=letsencrypt"
+      - "traefik.http.services.stepup.loadbalancer.server.port=80"
+      - "traefik.docker.network=dokploy-network"
+    depends_on:
+      - app
+
+  # ----------------------------------------------------------------------------
+  # 3. MySQL 8.0 Production Database
+  # ----------------------------------------------------------------------------
+  mysql:
+    image: mysql:8.0
+    container_name: stepup-prod-mysql
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-stepup_db}
+      MYSQL_USER: ${DB_USERNAME:-stepup_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
+    volumes:
+      - stepup_mysql_data:/var/lib/mysql
+    networks:
+      - stepup-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root_password}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ----------------------------------------------------------------------------
+  # 4. Asynchronous Queue Worker (Orders, Emails, Logs)
+  # ----------------------------------------------------------------------------
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    container_name: stepup-prod-queue
+    restart: always
+    command: ["php", "artisan", "queue:work", "database", "--tries=3", "--timeout=90", "--memory=256"]
+    environment:
+      APP_NAME: "${APP_NAME:-STEPUP} Queue Worker"
+      APP_ENV: production
+      APP_KEY: ${APP_KEY}
+      APP_DEBUG: "false"
+      LOG_CHANNEL: ${LOG_CHANNEL:-daily}
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-stepup_db}
+      DB_USERNAME: ${DB_USERNAME:-stepup_user}
+      DB_PASSWORD: ${DB_PASSWORD}
+      QUEUE_CONNECTION: database
+    volumes:
+      - stepup_storage_data:/var/www/html/storage/app
+    networks:
+      - stepup-network
+    depends_on:
+      - app
+      - mysql
+
+  # ----------------------------------------------------------------------------
+  # 5. Laravel Task Scheduler (Cron)
+  # ----------------------------------------------------------------------------
+  cron:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    container_name: stepup-prod-cron
+    restart: always
+    command: ["php", "artisan", "schedule:work"]
+    environment:
+      APP_NAME: "${APP_NAME:-STEPUP} Scheduler"
+      APP_ENV: production
+      APP_KEY: ${APP_KEY}
+      APP_DEBUG: "false"
+      LOG_CHANNEL: ${LOG_CHANNEL:-daily}
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-stepup_db}
+      DB_USERNAME: ${DB_USERNAME:-stepup_user}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - stepup_storage_data:/var/www/html/storage/app
+    networks:
+      - stepup-network
+    depends_on:
+      - app
+      - mysql
+
+# ------------------------------------------------------------------------------
+# Volumes & Networks
+# ------------------------------------------------------------------------------
+volumes:
+  stepup_mysql_data:
+    name: stepup_mysql_data
+  stepup_storage_data:
+    name: stepup_storage_data
+
+networks:
+  stepup-network:
+    name: stepup-network
+    driver: bridge
+  dokploy-network:
+    external: true

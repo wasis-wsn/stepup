@@ -1,0 +1,11 @@
+[Unit]
+Description=Run STEPUP Production Backup Daily at 03:30 WIB
+Persistent=true
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+RandomizedDelaySec=300
+Persistent=true
+
+[Install]
+WantedBy=timers.target

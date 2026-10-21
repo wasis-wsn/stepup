@@ -1,0 +1,95 @@
+# ==============================================================================
+# STEPUP - Production Application Dockerfile (PHP-FPM 8.3 Alpine)
+# ==============================================================================
+
+# Stage 1: Build Frontend Assets with Node.js
+FROM node:20-alpine AS node_builder
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage 2: Production PHP-FPM 8.3 Alpine Runtime
+FROM php:8.3-fpm-alpine
+
+# Install production system dependencies & build tools
+RUN apk add --no-cache \
+    bash \
+    curl \
+    git \
+    zip \
+    unzip \
+    libpng \
+    libjpeg-turbo \
+    freetype \
+    libxml2 \
+    oniguruma \
+    icu-libs \
+    libzip \
+    netcat-openbsd \
+    mysql-client \
+    && apk add --no-cache --virtual .build-deps \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
+    libxml2-dev \
+    oniguruma-dev \
+    icu-dev \
+    libzip-dev \
+    autoconf \
+    gcc \
+    g++ \
+    make \
+    linux-headers \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql mbstring xml bcmath intl gd opcache zip pcntl \
+    && apk del .build-deps
+
+# Install Composer binary
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Configure PHP OPcache for maximum production performance
+RUN { \
+    echo 'opcache.enable=1'; \
+    echo 'opcache.memory_consumption=256'; \
+    echo 'opcache.interned_strings_buffer=16'; \
+    echo 'opcache.max_accelerated_files=20000'; \
+    echo 'opcache.revalidate_freq=0'; \
+    echo 'opcache.validate_timestamps=0'; \
+    echo 'opcache.enable_cli=1'; \
+    echo 'opcache.fast_shutdown=1'; \
+} > /usr/local/etc/php/conf.d/opcache-recommended.ini
+
+# Configure PHP Production Resource Limits
+RUN { \
+    echo 'upload_max_filesize=32M'; \
+    echo 'post_max_size=32M'; \
+    echo 'memory_limit=256M'; \
+    echo 'max_execution_time=120'; \
+    echo 'max_input_time=120'; \
+    echo 'date.timezone=Asia/Jakarta'; \
+} > /usr/local/etc/php/conf.d/custom-php.ini
+
+WORKDIR /var/www/html
+
+# Copy application source code
+COPY . .
+
+# Copy compiled frontend assets from Stage 1
+COPY --from=node_builder /app/public/build ./public/build
+
+# Install production PHP dependencies without development packages
+RUN composer install --no-interaction --no-dev --prefer-dist --optimize-autoloader
+
+# Set permissions for web server user and entrypoint script
+RUN chmod +x /var/www/html/docker-entrypoint.prod.sh \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public
+
+USER www-data
+
+EXPOSE 9000
+
+ENTRYPOINT ["/var/www/html/docker-entrypoint.prod.sh"]
+CMD ["php-fpm", "-y", "/usr/local/etc/php-fpm.conf", "-R"]
