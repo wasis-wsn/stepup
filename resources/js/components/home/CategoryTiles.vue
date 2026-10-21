@@ -30,7 +30,7 @@
 
           <div class="relative w-full h-48 flex items-center justify-center my-4">
             <img
-              src="/storage/products/aerorun-pro.png"
+              src="/storage/products/aerorun-white.jpg"
               alt="Running Shoes"
               class="max-h-full object-contain img-hover-scale drop-shadow-md"
             />
@@ -61,7 +61,7 @@
 
           <div class="relative w-full h-48 flex items-center justify-center my-4">
             <img
-              src="/storage/products/urban-classic.png"
+              src="/storage/products/urban-black-gum.jpg"
               alt="Casual Sneakers"
               class="max-h-full object-contain img-hover-scale drop-shadow-md"
             />
@@ -92,7 +92,7 @@
 
           <div class="relative w-full h-48 flex items-center justify-center my-4">
             <img
-              src="/storage/products/urban-classic.png"
+              src="/storage/products/oxford-monarch-cognac.jpg"
               alt="Formal Shoes"
               class="max-h-full object-contain img-hover-scale drop-shadow-md filter contrast-125"
             />

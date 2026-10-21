@@ -1,6 +1,6 @@
 # ==============================================================================
 # STEPUP - Production Nginx Dockerfile
-# Self-contained Nginx image with compiled static assets
+# Self-contained Nginx image with compiled static assets & storage symlink
 # ==============================================================================
 
 # Stage 1: Build Frontend Assets with Node.js
@@ -22,6 +22,12 @@ COPY public /var/www/html/public
 
 # Copy compiled frontend assets from Stage 1 (Vite build JS, CSS & manifest)
 COPY --from=node_builder /app/public/build /var/www/html/public/build
+
+# Setup public storage directory and pre-load catalog product images
+RUN mkdir -p /var/www/html/storage/app/public/products \
+    && mkdir -p /var/www/html/public/storage/products
+COPY data_shoes/images/ /var/www/html/public/storage/products/
+COPY data_shoes/images/ /var/www/html/storage/app/public/products/
 
 EXPOSE 80
 
