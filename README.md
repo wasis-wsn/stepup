@@ -499,6 +499,6 @@ The frontend is built as a contemporary fashion editorial and sneaker catalog SP
 
 ## 👥 Reviewer & Submission Note
 
-- As specified in the coding test guidelines, for private repositories please add the collaborator: **`@zenner88`**.
+- As specified in the coding test guidelines, for private repositories please add the reviewer collaborators: **`@harrymahardhika`** and **`@zenner88`**.
 - All code adheres to PSR-12 and standard Laravel conventions.
 - Sensitive credentials and active `.env` files are excluded via `.gitignore`.
