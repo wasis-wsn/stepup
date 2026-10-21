@@ -32,7 +32,7 @@ Aplikasi **STEPUP** dirancang agar selaras dengan arsitektur server produksi SOR
                  │                               │
                  ▼                               ▼
        sorantara-profile                      STEPUP
-     (Port 8085 / Nginx)              (Port 8086 / Nginx)
+     (Port 8085 / Nginx)              (Port 8087 / Nginx)
                                                  │
                                ┌─────────────────┼─────────────────┐
                                ▼                 ▼                 ▼
@@ -47,7 +47,7 @@ Aplikasi **STEPUP** dirancang agar selaras dengan arsitektur server produksi SOR
 ### Karakteristik & Isolasi:
 1. **Web Server (`stepup-prod-web`):** Nginx 1.25 Alpine yang mandiri mengompilasi asset frontend (Vite) dan menyajikan file statis dengan HTTP caching 1 tahun (`Cache-Control: immutable`), kompresi Gzip, rate-limiting, dan meneruskan request dinamis ke PHP-FPM.
 2. **PHP-FPM (`stepup-prod-app`):** PHP 8.3 Alpine dengan OPcache agresif (`opcache.validate_timestamps=0`) untuk latensi sub-milidetik.
-3. **Port Local/LAN:** Dialokasikan port `8086` (sehingga tidak bentrok dengan `sorantara-profile` di port `8085`).
+3. **Port Local/LAN:** Dialokasikan port `8087` (sehingga tidak bentrok dengan `sorantara-profile` di port `8085` dan `cdn` di port `8086`).
 4. **Dokploy/Traefik Ingress:** Kontainer `stepup-prod-web` terhubung ke `dokploy-network` dengan label Traefik untuk routing domain otomatis.
 5. **Database Terisolasi (`stepup-prod-mysql`):** MySQL 8.0 dengan persistent volume `stepup_mysql_data`.
 6. **Background Services:** `stepup-prod-queue` (pemrosesan pesanan/email) & `stepup-prod-cron` (jadwal tugas berkala).
@@ -92,7 +92,7 @@ APP_KEY=base64:3wa9nWJ2F67Uy0NUjEEOKNe1wK6WYz7/yW1wXuUvg9o=
 APP_DEBUG=false
 APP_URL=https://stepup.sorantara.id
 APP_DOMAIN=stepup.sorantara.id
-STEPUP_WEB_PORT=8086
+STEPUP_WEB_PORT=8087
 
 LOG_CHANNEL=daily
 LOG_LEVEL=error
@@ -216,8 +216,8 @@ docker logs -f --tail=100 stepup-prod-web
 # Cek log antrean worker
 docker logs -f --tail=100 stepup-prod-queue
 
-# Uji akses lokal langsung (Port 8086)
-curl -I http://localhost:8086
+# Uji akses lokal langsung (Port 8087)
+curl -I http://localhost:8087
 
 # Uji status timer backup
 systemctl list-timers | grep stepup
