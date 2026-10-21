@@ -34,7 +34,7 @@ Arsitektur produksi STEPUP terisolasi secara aman menggunakan Docker container d
                  │                               │
                  ▼                               ▼
        sorantara-profile                      STEPUP
-     (Port 8085 / Nginx)              (Port 8087 / Nginx)
+     (Port 8085 / Nginx)              (Port 8088 / Nginx)
                                                  │
                                ┌─────────────────┼─────────────────┐
                                ▼                 ▼                 ▼
@@ -49,7 +49,7 @@ Arsitektur produksi STEPUP terisolasi secara aman menggunakan Docker container d
 ### Rincian Layanan & Kontainer:
 | Kontainer | Image / Base | Peran & Konfigurasi Utama |
 |---|---|---|
-| `stepup-prod-web` | `nginx:1.25-alpine` | Web server & reverse proxy FastCGI, rate limiting, gzip, Vite static asset cache 1 tahun, listen port 80 & LAN port 8087. Terhubung ke `dokploy-network`. |
+| `stepup-prod-web` | `nginx:1.25-alpine` | Web server & reverse proxy FastCGI, rate limiting, gzip, Vite static asset cache 1 tahun, listen port 80 & LAN port 8088. Terhubung ke `dokploy-network`. |
 | `stepup-prod-app` | `php:8.3-fpm-alpine` | Core aplikasi Laravel, OPcache bytecode (`opcache.validate_timestamps=0`), entrypoint otomatis migrasi & cache. |
 | `stepup-prod-mysql` | `mysql:8.0` | Database relasional MySQL dengan persistent volume `stepup_mysql_data`. |
 | `stepup-prod-queue` | `php:8.3-fpm-alpine` | Worker antrean background (`queue:work`) untuk pesanan, sinkronisasi, dan email. |
@@ -100,7 +100,7 @@ APP_KEY=base64:3wa9nWJ2F67Uy0NUjEEOKNe1wK6WYz7/yW1wXuUvg9o=
 APP_DEBUG=false
 APP_URL=https://stepup.sorantara.id
 APP_DOMAIN=stepup.sorantara.id
-STEPUP_WEB_PORT=8087
+STEPUP_WEB_PORT=8088
 
 LOG_CHANNEL=daily
 LOG_LEVEL=error
@@ -217,8 +217,8 @@ docker logs -f --tail=100 stepup-prod-web
 # Cek log queue worker
 docker logs -f --tail=100 stepup-prod-queue
 
-# Uji koneksi lokal langsung di server (Port 8087)
-curl -I http://localhost:8087
+# Uji koneksi lokal langsung di server (Port 8088)
+curl -I http://localhost:8088
 
 # Cek status timer backup harian
 systemctl list-timers | grep stepup

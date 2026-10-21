@@ -56,8 +56,8 @@ services:
     container_name: stepup-prod-web
     restart: always
     ports:
-      # Port 8087 untuk direct local/LAN access (menghindari konflik dengan 8085 sorantara-profile & 8086 cdn)
-      - "${STEPUP_WEB_PORT:-8087}:80"
+      # Port 8088 untuk direct local/LAN access (8085 sorantara-profile, 8086 cdn-dev, 8087 cdn-prod)
+      - "${STEPUP_WEB_PORT:-8088}:80"
     volumes:
       - stepup_storage_data:/var/www/html/storage/app:ro
     networks:
