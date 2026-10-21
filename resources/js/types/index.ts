@@ -19,6 +19,11 @@ export interface Product {
   name: string;
   slug: string;
   description: string | null;
+  detail?: string | null;
+  sizes?: string[] | null;
+  color?: string | null;
+  discount?: number;
+  discounted_price?: string | number;
   price: string | number;
   image: string | null;
   category?: Category | null;
@@ -76,6 +81,10 @@ export interface ProductPayload {
   category_id: number | string;
   price: number | string;
   description?: string;
+  detail?: string;
+  sizes?: string | string[];
+  color?: string;
+  discount?: number | string;
   image?: File | string | null;
 }
 

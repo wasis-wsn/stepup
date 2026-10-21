@@ -23,11 +23,22 @@ class ProductResource extends JsonResource
             }
         }
 
+        $sizes = $this->sizes;
+        if (is_string($sizes)) {
+            $decoded = json_decode($sizes, true);
+            $sizes = is_array($decoded) ? $decoded : array_map('trim', explode(',', $sizes));
+        }
+
         return [
             'id' => $this->id,
             'name' => $this->name,
             'slug' => $this->slug,
             'description' => $this->description,
+            'detail' => $this->detail,
+            'sizes' => $sizes ?: ['39', '40', '41', '42', '43', '44', '45'],
+            'color' => $this->color,
+            'discount' => (int) ($this->discount ?? 0),
+            'discounted_price' => number_format((float) $this->discounted_price, 2, '.', ''),
             'price' => number_format((float) $this->price, 2, '.', ''),
             'image' => $imageUrl,
             'category' => $this->category ? [

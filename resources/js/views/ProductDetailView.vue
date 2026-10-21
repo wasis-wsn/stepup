@@ -75,12 +75,28 @@
               {{ product.name }}
             </h1>
 
-            <div class="mt-4 text-2xl font-extrabold text-[#111111]">
-              {{ formatRupiah(product.price) }}
+            <div class="mt-4 flex flex-wrap items-baseline gap-3">
+              <span v-if="product.discount && product.discount > 0" class="text-2xl font-extrabold text-[#111111]">
+                {{ formatRupiah(product.discounted_price || (Number(product.price) * (100 - product.discount) / 100)) }}
+              </span>
+              <span
+                :class="product.discount && product.discount > 0 ? 'text-sm text-[#707070] line-through font-semibold' : 'text-2xl font-extrabold text-[#111111]'"
+              >
+                {{ formatRupiah(product.price) }}
+              </span>
+              <Badge v-if="product.discount && product.discount > 0" class="bg-black text-white text-[10px] font-bold uppercase tracking-wider">
+                {{ product.discount }}% OFF
+              </Badge>
+            </div>
+
+            <!-- Colorway -->
+            <div v-if="product.color" class="mt-3 text-xs text-[#707070] flex items-center gap-2">
+              <span class="font-bold uppercase tracking-wider text-[#111111] text-[10px]">Color:</span>
+              <span class="font-medium text-[#111111]">{{ product.color }}</span>
             </div>
           </div>
 
-          <!-- Description -->
+          <!-- Description (Design & Construction) -->
           <div class="border-t border-b border-[#E7E7E5] py-6 space-y-4">
             <h3 class="text-[11px] font-bold uppercase tracking-widest text-[#111111]">
               Design & Construction
@@ -96,17 +112,13 @@
               Highlights
             </h4>
             <ul class="text-xs text-[#707070] space-y-2">
-              <li class="flex items-start gap-2">
+              <li
+                v-for="(highlight, idx) in formattedHighlights"
+                :key="idx"
+                class="flex items-start gap-2"
+              >
                 <span class="font-bold text-black">&bull;</span>
-                <span>Anatomically shaped footbed with arch support</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <span class="font-bold text-black">&bull;</span>
-                <span>Breathable, lightweight exterior construction</span>
-              </li>
-              <li class="flex items-start gap-2">
-                <span class="font-bold text-black">&bull;</span>
-                <span>Durable rubber compound traction outsole</span>
+                <span>{{ highlight }}</span>
               </li>
             </ul>
           </div>
@@ -119,7 +131,7 @@
             </div>
             <div class="grid grid-cols-7 gap-1.5 sm:gap-2">
               <button
-                v-for="s in sizes"
+                v-for="s in availableSizes"
                 :key="s"
                 type="button"
                 @click="selectedSize = s"
@@ -139,7 +151,7 @@
               class="flex-1 py-4 bg-[#111111] hover:bg-black text-white text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs hover:shadow"
             >
               <ShoppingBag class="w-4 h-4" />
-              <span>Add to Bag &bull; {{ formatRupiah(product.price) }}</span>
+              <span>Add to Bag &bull; {{ formatRupiah(product.discount && product.discount > 0 ? (product.discounted_price || (Number(product.price) * (100 - product.discount) / 100)) : product.price) }}</span>
             </button>
             <router-link to="/products" class="sm:w-auto">
               <Button variant="outline" size="lg" class="w-full sm:w-auto py-4">
@@ -175,7 +187,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { ShoppingBag } from 'lucide-vue-next';
 import type { Product } from '@/types';
@@ -194,8 +206,29 @@ const product = ref<Product | null>(null);
 const relatedProducts = ref<Product[]>([]);
 const loading = ref(true);
 
-const sizes = ['39', '40', '41', '42', '43', '44', '45'];
+const defaultSizes = ['39', '40', '41', '42', '43', '44', '45'];
 const selectedSize = ref('42');
+
+const availableSizes = computed(() => {
+  if (product.value?.sizes && Array.isArray(product.value.sizes) && product.value.sizes.length > 0) {
+    return product.value.sizes;
+  }
+  return defaultSizes;
+});
+
+const formattedHighlights = computed(() => {
+  if (product.value?.detail) {
+    return product.value.detail
+      .split('\n')
+      .map(line => line.replace(/^[•\-\*]\s*/, '').trim())
+      .filter(Boolean);
+  }
+  return [
+    'Anatomically shaped footbed with arch support',
+    'Breathable, lightweight exterior construction',
+    'Durable rubber compound traction outsole',
+  ];
+});
 
 function handleAddToBag() {
   if (product.value) {

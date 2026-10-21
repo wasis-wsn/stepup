@@ -22,6 +22,10 @@ class Product extends Model
         'name',
         'slug',
         'description',
+        'detail',
+        'sizes',
+        'color',
+        'discount',
         'price',
         'image',
     ];
@@ -35,7 +39,22 @@ class Product extends Model
     {
         return [
             'price' => 'decimal:2',
+            'discount' => 'integer',
+            'sizes' => 'array',
         ];
+    }
+
+    /**
+     * Calculate price after discount if discount is applied.
+     */
+    public function getDiscountedPriceAttribute(): float
+    {
+        $basePrice = (float) $this->price;
+        if ($this->discount && $this->discount > 0) {
+            $discountAmount = ($basePrice * $this->discount) / 100;
+            return round($basePrice - $discountAmount, 2);
+        }
+        return $basePrice;
     }
 
     /**

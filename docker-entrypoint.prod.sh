@@ -49,7 +49,8 @@ if [ "$1" = "php-fpm" ]; then
         echo "=> Fresh database detected (0 products). Automatically running seeders..."
         php artisan db:seed --force || echo "=> Database seeding failed or skipped."
     else
-        echo "=> Database already contains $PRODUCT_COUNT products. Skipping auto-seed."
+        echo "=> Database contains $PRODUCT_COUNT products. Synchronizing default footwear details..."
+        php artisan db:seed --class=ProductSeeder --force || echo "=> Footwear detail sync skipped."
     fi
 
     # Generate Swagger / OpenAPI documentation

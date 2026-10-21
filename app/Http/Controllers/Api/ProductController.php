@@ -144,7 +144,11 @@ class ProductController extends Controller
                         new OA\Property(property: 'name', type: 'string', example: 'STEPUP Trail Strider'),
                         new OA\Property(property: 'category_id', type: 'integer', example: 1),
                         new OA\Property(property: 'price', type: 'number', format: 'float', example: 580000),
-                        new OA\Property(property: 'description', type: 'string', nullable: true, example: 'Rugged all-weather outsole.'),
+                        new OA\Property(property: 'discount', type: 'integer', example: 10, description: 'Discount percentage (0-100)'),
+                        new OA\Property(property: 'color', type: 'string', example: 'Olive Green / Charcoal'),
+                        new OA\Property(property: 'sizes', type: 'string', example: '39, 40, 41, 42, 43, 44, 45'),
+                        new OA\Property(property: 'description', type: 'string', nullable: true, example: 'Design & Construction details.'),
+                        new OA\Property(property: 'detail', type: 'string', nullable: true, example: 'Highlights and key feature points.'),
                         new OA\Property(property: 'image', type: 'string', format: 'binary', nullable: true),
                     ]
                 )
@@ -222,7 +226,11 @@ class ProductController extends Controller
                         new OA\Property(property: 'name', type: 'string', example: 'STEPUP Trail Strider V2'),
                         new OA\Property(property: 'category_id', type: 'integer', example: 1),
                         new OA\Property(property: 'price', type: 'number', example: 620000),
-                        new OA\Property(property: 'description', type: 'string', nullable: true),
+                        new OA\Property(property: 'discount', type: 'integer', example: 15, description: 'Discount percentage (0-100)'),
+                        new OA\Property(property: 'color', type: 'string', example: 'Olive Green / Charcoal'),
+                        new OA\Property(property: 'sizes', type: 'string', example: '39, 40, 41, 42, 43, 44, 45'),
+                        new OA\Property(property: 'description', type: 'string', nullable: true, example: 'Design & Construction details.'),
+                        new OA\Property(property: 'detail', type: 'string', nullable: true, example: 'Highlights and key feature points.'),
                         new OA\Property(property: 'image', type: 'string', format: 'binary', nullable: true),
                     ]
                 )

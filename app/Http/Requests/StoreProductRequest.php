@@ -25,11 +25,26 @@ class StoreProductRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'description' => ['nullable', 'string'],
+            'detail' => ['nullable', 'string'],
+            'sizes' => ['nullable'],
+            'color' => ['nullable', 'string', 'max:255'],
+            'discount' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'price' => ['required', 'numeric', 'min:0'],
             'image' => $this->hasFile('image')
                 ? ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif', 'max:5120']
                 : ['nullable', 'string', 'max:255'],
         ];
+    }
+
+    /**
+     * Prepare inputs for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        if (is_string($this->sizes) && trim($this->sizes) !== '') {
+            $parsed = array_values(array_filter(array_map('trim', explode(',', $this->sizes))));
+            $this->merge(['sizes' => $parsed]);
+        }
     }
 
     /**

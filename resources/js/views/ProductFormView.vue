@@ -60,7 +60,7 @@
 
           <Input
             v-model="form.price"
-            label="Price (IDR)"
+            label="Price (IDR) *"
             type="number"
             min="0"
             step="1000"
@@ -70,19 +70,64 @@
           />
         </div>
 
-        <!-- Description -->
+        <!-- Color, Discount, and Sizes in 3 columns -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <Input
+            v-model="form.color"
+            label="Color / Warna"
+            type="text"
+            placeholder="Triple White, Matte Black..."
+            :error="errors.color?.[0]"
+          />
+
+          <Input
+            v-model="form.discount"
+            label="Discount / Diskon (%)"
+            type="number"
+            min="0"
+            max="100"
+            placeholder="0"
+            :error="errors.discount?.[0]"
+          />
+
+          <Input
+            v-model="form.sizes"
+            label="Sizes / Ukuran (Pisahkan Koma)"
+            type="text"
+            placeholder="39, 40, 41, 42, 43, 44, 45"
+            :error="errors.sizes?.[0]"
+          />
+        </div>
+
+        <!-- Description (Design & Construction) -->
         <div class="space-y-1.5">
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-[#707070]">
-            Editorial Description
+            Deskripsi (Design & Construction)
           </label>
           <textarea
             v-model="form.description"
-            rows="4"
+            rows="3"
             placeholder="Engineered with breathable mesh upper and dual-density foam cushioning..."
             class="w-full border border-[#E7E7E5] p-3 text-xs text-[#111111] placeholder:text-[#999999] focus:border-black focus:outline-none transition-colors"
           ></textarea>
           <p v-if="errors.description?.[0]" class="text-[11px] text-red-500 font-medium">
             {{ errors.description[0] }}
+          </p>
+        </div>
+
+        <!-- Detail (Highlights) -->
+        <div class="space-y-1.5">
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-[#707070]">
+            Detail (Highlights / Rincian Fitur Utama)
+          </label>
+          <textarea
+            v-model="form.detail"
+            rows="3"
+            placeholder="• Breathable mesh upper&#10;• Ultra-responsive cushioning&#10;• Reinforced traction sole"
+            class="w-full border border-[#E7E7E5] p-3 text-xs text-[#111111] placeholder:text-[#999999] focus:border-black focus:outline-none transition-colors"
+          ></textarea>
+          <p v-if="errors.detail?.[0]" class="text-[11px] text-red-500 font-medium">
+            {{ errors.detail[0] }}
           </p>
         </div>
 
@@ -173,7 +218,11 @@ const form = ref({
   name: '',
   category_id: '' as string | number,
   price: '' as string | number,
+  discount: 0 as number,
+  color: '',
+  sizes: '39, 40, 41, 42, 43, 44, 45',
   description: '',
+  detail: '',
 });
 
 function handleFileChange(e: Event) {
@@ -201,7 +250,11 @@ async function loadExistingProduct() {
     form.value.name = item.name;
     form.value.category_id = item.category?.id || '';
     form.value.price = parseFloat(String(item.price));
+    form.value.discount = item.discount || 0;
+    form.value.color = item.color || '';
+    form.value.sizes = Array.isArray(item.sizes) ? item.sizes.join(', ') : (item.sizes || '');
     form.value.description = item.description || '';
+    form.value.detail = item.detail || '';
     currentImageUrl.value = item.image;
   } catch (err) {
     toast.error('Failed to load product details.');
@@ -220,7 +273,11 @@ async function handleSubmit() {
         name: form.value.name,
         category_id: form.value.category_id,
         price: form.value.price,
+        discount: form.value.discount,
+        color: form.value.color,
+        sizes: form.value.sizes,
         description: form.value.description,
+        detail: form.value.detail,
         image: selectedFile.value || undefined,
       });
       toast.success('Footwear style updated successfully.');
@@ -229,7 +286,11 @@ async function handleSubmit() {
         name: form.value.name,
         category_id: form.value.category_id,
         price: form.value.price,
+        discount: form.value.discount,
+        color: form.value.color,
+        sizes: form.value.sizes,
         description: form.value.description,
+        detail: form.value.detail,
         image: selectedFile.value,
       });
       toast.success('New footwear style published to catalog.');

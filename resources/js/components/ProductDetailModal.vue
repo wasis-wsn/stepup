@@ -41,27 +41,53 @@
               {{ product.name }}
             </h2>
 
-            <p class="text-2xl font-extrabold text-black mb-4">
-              {{ formatRupiah(product.price) }}
-            </p>
+            <div class="flex items-baseline gap-2 mb-2">
+              <span class="text-2xl font-extrabold text-black">
+                {{ formatRupiah(product.discount && product.discount > 0 ? (product.discounted_price || (Number(product.price) * (100 - product.discount) / 100)) : product.price) }}
+              </span>
+              <span v-if="product.discount && product.discount > 0" class="text-sm text-gray-400 line-through font-semibold">
+                {{ formatRupiah(product.price) }}
+              </span>
+              <span v-if="product.discount && product.discount > 0" class="text-xs bg-black text-white px-2 py-0.5 rounded font-bold">
+                {{ product.discount }}% OFF
+              </span>
+            </div>
 
-            <div class="text-sm text-gray-600 leading-relaxed mb-6">
+            <div v-if="product.color" class="text-xs text-gray-500 mb-4 flex items-center gap-1.5">
+              <span class="font-bold text-black uppercase tracking-wider text-[10px]">Color:</span>
+              <span>{{ product.color }}</span>
+            </div>
+
+            <!-- Description (Design & Construction) -->
+            <div class="text-sm text-gray-600 leading-relaxed mb-4">
+              <p class="font-bold text-[11px] uppercase tracking-wider text-black mb-1">Design & Construction</p>
               <p>{{ product.description || 'No description available for this shoe model.' }}</p>
             </div>
 
             <!-- Features Highlights -->
-            <div class="border-t border-gray-100 pt-4 space-y-2.5">
-              <div class="flex items-center gap-2.5 text-xs text-gray-600">
-                <span class="w-1.5 h-1.5 rounded-full bg-black"></span>
-                <span>Breathable engineered mesh upper</span>
+            <div class="border-t border-gray-100 pt-4 space-y-2">
+              <p class="font-bold text-[11px] uppercase tracking-wider text-black mb-1">Highlights</p>
+              <div
+                v-for="(h, idx) in (product.detail ? product.detail.split('\n').map(l => l.replace(/^[•\-\*]\s*/, '').trim()).filter(Boolean) : ['Breathable engineered mesh upper', 'Ultra-responsive foam cushioning', 'Reinforced durable traction sole'])"
+                :key="idx"
+                class="flex items-center gap-2.5 text-xs text-gray-600"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-black shrink-0"></span>
+                <span>{{ h }}</span>
               </div>
-              <div class="flex items-center gap-2.5 text-xs text-gray-600">
-                <span class="w-1.5 h-1.5 rounded-full bg-black"></span>
-                <span>Ultra-responsive foam cushioning</span>
-              </div>
-              <div class="flex items-center gap-2.5 text-xs text-gray-600">
-                <span class="w-1.5 h-1.5 rounded-full bg-black"></span>
-                <span>Reinforced durable traction sole</span>
+            </div>
+
+            <!-- Sizes Available -->
+            <div class="border-t border-gray-100 pt-4 mt-4">
+              <p class="font-bold text-[11px] uppercase tracking-wider text-black mb-2">Available Sizes</p>
+              <div class="flex flex-wrap gap-1.5">
+                <span
+                  v-for="s in (product.sizes && Array.isArray(product.sizes) ? product.sizes : ['39', '40', '41', '42', '43', '44', '45'])"
+                  :key="s"
+                  class="px-2.5 py-1 text-xs font-semibold bg-gray-50 border border-gray-200 rounded text-gray-800"
+                >
+                  {{ s }}
+                </span>
               </div>
             </div>
           </div>

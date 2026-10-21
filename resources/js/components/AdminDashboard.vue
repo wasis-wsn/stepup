@@ -262,14 +262,65 @@
             </div>
           </div>
 
+          <!-- Color, Discount, Sizes -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                Color / Warna
+              </label>
+              <input
+                v-model="productForm.color"
+                type="text"
+                placeholder="Triple White"
+                class="w-full px-3.5 py-2 rounded-xl border border-gray-200 focus:outline-none focus:border-black text-sm"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                Discount / Diskon (%)
+              </label>
+              <input
+                v-model="productForm.discount"
+                type="number"
+                min="0"
+                max="100"
+                placeholder="0"
+                class="w-full px-3.5 py-2 rounded-xl border border-gray-200 focus:outline-none focus:border-black text-sm"
+              />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                Sizes / Ukuran
+              </label>
+              <input
+                v-model="productForm.sizes"
+                type="text"
+                placeholder="39, 40, 41, 42, 43, 44"
+                class="w-full px-3.5 py-2 rounded-xl border border-gray-200 focus:outline-none focus:border-black text-sm"
+              />
+            </div>
+          </div>
+
           <div>
             <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
-              Description
+              Deskripsi (Design & Construction)
             </label>
             <textarea
               v-model="productForm.description"
-              rows="3"
+              rows="2"
               placeholder="Engineered for responsive cushioning and lightweight durability..."
+              class="w-full px-3.5 py-2 rounded-xl border border-gray-200 focus:outline-none focus:border-black text-sm"
+            ></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+              Detail (Highlights / Rincian Fitur)
+            </label>
+            <textarea
+              v-model="productForm.detail"
+              rows="2"
+              placeholder="• Breathable engineered mesh&#10;• Ultra-responsive cushioning"
               class="w-full px-3.5 py-2 rounded-xl border border-gray-200 focus:outline-none focus:border-black text-sm"
             ></textarea>
           </div>
@@ -391,7 +442,11 @@ const productForm = ref({
   name: '',
   category_id: '',
   price: '',
+  discount: 0,
+  color: '',
+  sizes: '39, 40, 41, 42, 43, 44, 45',
   description: '',
+  detail: '',
   current_image: null
 });
 
@@ -441,7 +496,11 @@ function openAddModal() {
     name: '',
     category_id: categories.value[0]?.id || '',
     price: '',
+    discount: 0,
+    color: '',
+    sizes: '39, 40, 41, 42, 43, 44, 45',
     description: '',
+    detail: '',
     current_image: null
   };
   showModal.value = true;
@@ -457,7 +516,11 @@ function openEditModal(product) {
     name: product.name,
     category_id: product.category?.id || '',
     price: parseFloat(product.price),
+    discount: product.discount || 0,
+    color: product.color || '',
+    sizes: Array.isArray(product.sizes) ? product.sizes.join(', ') : (product.sizes || ''),
     description: product.description || '',
+    detail: product.detail || '',
     current_image: product.image
   };
   showModal.value = true;
@@ -485,8 +548,20 @@ async function submitProduct() {
   formData.append('name', productForm.value.name);
   formData.append('category_id', productForm.value.category_id);
   formData.append('price', productForm.value.price);
+  if (productForm.value.discount !== undefined) {
+    formData.append('discount', productForm.value.discount);
+  }
+  if (productForm.value.color) {
+    formData.append('color', productForm.value.color);
+  }
+  if (productForm.value.sizes) {
+    formData.append('sizes', productForm.value.sizes);
+  }
   if (productForm.value.description) {
     formData.append('description', productForm.value.description);
+  }
+  if (productForm.value.detail) {
+    formData.append('detail', productForm.value.detail);
   }
   if (selectedFile.value) {
     formData.append('image', selectedFile.value);

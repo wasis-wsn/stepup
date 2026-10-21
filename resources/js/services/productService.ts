@@ -75,8 +75,21 @@ export const productService = {
     formData.append('name', payload.name);
     formData.append('category_id', String(payload.category_id));
     formData.append('price', String(payload.price));
-    if (payload.description) {
+    if (payload.description !== undefined && payload.description !== null) {
       formData.append('description', payload.description);
+    }
+    if (payload.detail !== undefined && payload.detail !== null) {
+      formData.append('detail', payload.detail);
+    }
+    if (payload.sizes !== undefined && payload.sizes !== null) {
+      const sizesVal = Array.isArray(payload.sizes) ? payload.sizes.join(', ') : payload.sizes;
+      formData.append('sizes', sizesVal);
+    }
+    if (payload.color !== undefined && payload.color !== null) {
+      formData.append('color', payload.color);
+    }
+    if (payload.discount !== undefined && payload.discount !== null) {
+      formData.append('discount', String(payload.discount));
     }
     if (payload.image instanceof File) {
       formData.append('image', payload.image);
@@ -98,7 +111,14 @@ export const productService = {
     if (payload.name !== undefined) formData.append('name', payload.name);
     if (payload.category_id !== undefined) formData.append('category_id', String(payload.category_id));
     if (payload.price !== undefined) formData.append('price', String(payload.price));
-    if (payload.description !== undefined) formData.append('description', payload.description);
+    if (payload.description !== undefined) formData.append('description', payload.description || '');
+    if (payload.detail !== undefined) formData.append('detail', payload.detail || '');
+    if (payload.sizes !== undefined) {
+      const sizesVal = Array.isArray(payload.sizes) ? payload.sizes.join(', ') : (payload.sizes || '');
+      formData.append('sizes', sizesVal);
+    }
+    if (payload.color !== undefined) formData.append('color', payload.color || '');
+    if (payload.discount !== undefined) formData.append('discount', String(payload.discount || 0));
 
     if (payload.image instanceof File) {
       formData.append('image', payload.image);

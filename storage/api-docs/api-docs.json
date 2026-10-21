@@ -850,9 +850,27 @@
                                         "format": "float",
                                         "example": 580000
                                     },
+                                    "discount": {
+                                        "description": "Discount percentage (0-100)",
+                                        "type": "integer",
+                                        "example": 10
+                                    },
+                                    "color": {
+                                        "type": "string",
+                                        "example": "Olive Green / Charcoal"
+                                    },
+                                    "sizes": {
+                                        "type": "string",
+                                        "example": "39, 40, 41, 42, 43, 44, 45"
+                                    },
                                     "description": {
                                         "type": "string",
-                                        "example": "Rugged all-weather outsole.",
+                                        "example": "Design & Construction details.",
+                                        "nullable": true
+                                    },
+                                    "detail": {
+                                        "type": "string",
+                                        "example": "Highlights and key feature points.",
                                         "nullable": true
                                     },
                                     "image": {
@@ -956,8 +974,27 @@
                                         "type": "number",
                                         "example": 620000
                                     },
+                                    "discount": {
+                                        "description": "Discount percentage (0-100)",
+                                        "type": "integer",
+                                        "example": 15
+                                    },
+                                    "color": {
+                                        "type": "string",
+                                        "example": "Olive Green / Charcoal"
+                                    },
+                                    "sizes": {
+                                        "type": "string",
+                                        "example": "39, 40, 41, 42, 43, 44, 45"
+                                    },
                                     "description": {
                                         "type": "string",
+                                        "example": "Design & Construction details.",
+                                        "nullable": true
+                                    },
+                                    "detail": {
+                                        "type": "string",
+                                        "example": "Highlights and key feature points.",
                                         "nullable": true
                                     },
                                     "image": {

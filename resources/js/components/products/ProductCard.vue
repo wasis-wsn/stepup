@@ -17,10 +17,13 @@
         No Image
       </div>
 
-      <!-- Category Tag (top left) -->
-      <div class="absolute top-3 left-3 z-10">
+      <!-- Category Tag & Discount (top left) -->
+      <div class="absolute top-3 left-3 z-10 flex items-center gap-1.5">
         <Badge variant="secondary" class="bg-white/90 backdrop-blur-xs text-[9px] font-bold">
           {{ product.category?.name || 'Footwear' }}
+        </Badge>
+        <Badge v-if="product.discount && product.discount > 0" class="bg-black text-white text-[9px] font-bold uppercase tracking-wider">
+          -{{ product.discount }}%
         </Badge>
       </div>
 
@@ -42,15 +45,23 @@
         <h3 class="text-xs sm:text-sm font-bold text-[#111111] tracking-tight group-hover:text-black transition-colors line-clamp-1">
           {{ product.name }}
         </h3>
+        <p v-if="product.color" class="text-[10px] text-[#999999] mt-0.5 font-medium line-clamp-1">
+          {{ product.color }}
+        </p>
         <p class="text-[11px] text-[#707070] line-clamp-2 mt-1 leading-relaxed">
           {{ product.description || 'Premium everyday footwear engineered for daily movement.' }}
         </p>
       </div>
 
       <div class="mt-4 pt-3 border-t border-[#F5F5F3] flex items-center justify-between">
-        <span class="text-xs sm:text-sm font-black text-[#111111]">
-          {{ formatRupiah(product.price) }}
-        </span>
+        <div class="flex items-baseline gap-1.5">
+          <span class="text-xs sm:text-sm font-black text-[#111111]">
+            {{ formatRupiah(product.discount && product.discount > 0 ? (product.discounted_price || (Number(product.price) * (100 - product.discount) / 100)) : product.price) }}
+          </span>
+          <span v-if="product.discount && product.discount > 0" class="text-[10px] text-[#999999] line-through font-medium">
+            {{ formatRupiah(product.price) }}
+          </span>
+        </div>
         <span class="text-[10px] font-bold uppercase tracking-wider text-[#707070] group-hover:text-black transition-colors flex items-center gap-1">
           View Detail →
         </span>
