@@ -25,8 +25,8 @@ COPY --from=node_builder /app/public/build /var/www/html/public/build
 
 # Setup public storage directory and pre-load catalog product images
 RUN mkdir -p /var/www/html/storage/app/public/products \
-    && mkdir -p /var/www/html/public/storage/products
-COPY data_shoes/images/ /var/www/html/public/storage/products/
+    && rm -rf /var/www/html/public/storage \
+    && ln -s /var/www/html/storage/app/public /var/www/html/public/storage
 COPY data_shoes/images/ /var/www/html/storage/app/public/products/
 
 EXPOSE 80
