@@ -38,6 +38,7 @@ services:
       MAIL_ENCRYPTION: ${MAIL_ENCRYPTION:-tls}
       MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:-no-reply@stepup.id}
       MAIL_FROM_NAME: "${APP_NAME:-STEPUP}"
+      L5_SWAGGER_USE_ABSOLUTE_PATH: "false"
     volumes:
       - stepup_storage_data:/var/www/html/storage/app
     networks:

@@ -14,8 +14,16 @@ use OpenApi\Attributes as OA;
     )
 )]
 #[OA\Server(
+    url: '/api',
+    description: 'Current Environment API Server'
+)]
+#[OA\Server(
+    url: 'https://stepup.sorantara.id/api',
+    description: 'Production Cloudflare / Dokploy Server'
+)]
+#[OA\Server(
     url: 'http://localhost:8000/api',
-    description: 'Local Docker / Development Server'
+    description: 'Local Development Server'
 )]
 #[OA\SecurityScheme(
     securityScheme: 'bearerAuth',
